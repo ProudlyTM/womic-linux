@@ -3,9 +3,10 @@
 if [ $# -eq 0 ]; then
     echo "Usage: womic [OPTIONS]"
     echo "Options:"
-    echo "   -b  -  to connect via Bluetooth"
-    echo "   -w  -  to connect via WiFi"
-    echo "   -h  -  help (display this message)"
+    echo "   -b   - to connect via Bluetooth"
+    echo "   -w   - to connect via WiFi"
+    echo "   -k   - to disconnect" 
+    echo "   -h   - help (this message)"
     exit 1
 fi
 
@@ -33,38 +34,40 @@ while getopts "hbwk" OPTION; do
         h)
             echo "Usage: womic [OPTIONS]"
             echo "Options:"
-            echo "   -b     to connect via Bluetooth"
-            echo "   -w     to connect via WiFi"
-            echo "   -h     help (this message)"
+            echo "   -b   - to connect via Bluetooth"
+            echo "   -w   - to connect via WiFi"
+            echo "   -k   - to disconnect" 
+            echo "   -h   - help (this message)"
             exit 0
             ;;
         b)
             executable_check
             module_check
-            # WIP
-            echo "Do stuff"
-            exit 0
+            printf "(Format: xx:xx:xx:xx:xx:xx)\n"
+            printf "Enter device address: "
+            read ADDRESS
+            echo ""
+            printf "Run 'womic -k' to disconnect\n\n"
+            ./$MICCLIENT -t Bluetooth $ADDRESS &
+            sleep 1
+            echo $! > /tmp/womic.pid
+            sleep 3
             ;;
         w)
             executable_check
             module_check
+            printf "(Example: 192.168.0.100)\n"
             printf "Enter device IP: "
             read IP
             echo ""
-            # TODO - Need to fix this part below, it's not working properly yet
-            ./$MICCLIENT -t Wifi $IP &> /tmp/womic.status &
+            printf "Run 'womic -k' to disconnect\n\n"
+            ./$MICCLIENT -t Wifi $IP &
             sleep 1
             echo $! > /tmp/womic.pid
-            tail -n0 -f /tmp/womic.status | sed '/^Connected$/q; /^Error: Fail to connect to server.$/q'
-            if [ `grep "Connected" /tmp/womic.status` ]; then
-                printf "\nUse './womic.sh -k' to disconnect\n"
-                exit 0
-            else
-                exit 1
-            fi
+            sleep 3
             ;;
         k)
-            if ! [ `ps -p $(cat /tmp/womic.pid) > /dev/null 2>&1` ]; then
+            if ! ps -p $(cat /tmp/womic.pid) > /dev/null 2>&1; then
                 printf "WO Mic is not running!\n"
                 exit 1
             else
