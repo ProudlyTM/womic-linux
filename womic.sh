@@ -10,8 +10,8 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-if [ `ls | grep ^micclient-x86_64_.*$` ]; then
-    MICCLIENT=$(ls | grep ^micclient-x86_64_.*$)
+if [ `ls | grep ^micclient-x86_64.*$` ]; then
+    MICCLIENT=$(ls | grep ^micclient-x86_64.*$)
 else
     echo "WO Mic Appimage binary not found! Make sure you have this script in the same directory as the binary"
     exit 1
