@@ -41,33 +41,43 @@ while getopts "hbwk" OPTION; do
             exit 0
             ;;
         b)
-            executable_check
-            module_check
-            printf "(Format: xx:xx:xx:xx:xx:xx)\n"
-            printf "Enter device address: "
-            read ADDRESS
-            echo ""
-            printf "Run 'womic -k' to disconnect\n\n"
-            ./$MICCLIENT -t Bluetooth $ADDRESS &
-            sleep 3
+            if ! [[ -z $(ps aux | grep '[m]icclient-x86_64.*$' | awk '{print $2}') ]]; then
+                printf "WO Mic is already running!\n"
+                exit 1
+            else
+                executable_check
+                module_check
+                printf "(Format: xx:xx:xx:xx:xx:xx)\n"
+                printf "Enter device address: "
+                read ADDRESS
+                echo ""
+                printf "Run 'womic -k' to disconnect\n\n"
+                ./$MICCLIENT -t Bluetooth $ADDRESS &
+                sleep 3
+            fi
             ;;
         w)
-            executable_check
-            module_check
-            printf "(Example: 192.168.0.100)\n"
-            printf "Enter device IP: "
-            read IP
-            echo ""
-            printf "Run 'womic -k' to disconnect\n\n"
-            ./$MICCLIENT -t Wifi $IP &
-            sleep 3
+            if ! [[ -z $(ps aux | grep '[m]icclient-x86_64.*$' | awk '{print $2}') ]]; then
+                printf "WO Mic is already running!\n"
+                exit 1
+            else
+                executable_check
+                module_check
+                printf "(Example: 192.168.0.100)\n"
+                printf "Enter device IP: "
+                read IP
+                echo ""
+                printf "Run 'womic -k' to disconnect\n\n"
+                ./$MICCLIENT -t Wifi $IP &
+                sleep 3
+            fi
             ;;
         k)
-            if ! kill -2 $(ps aux | grep 'micclient-x86_64.*$' | awk '{print $2}') > /dev/null 2>&1; then
+            if ! kill -2 $(ps aux | grep '[m]icclient-x86_64.*$' | awk '{print $2}') > /dev/null 2>&1; then
                 printf "WO Mic is not running!\n"
                 exit 1
             else
-                kill -2 $(ps aux | grep 'micclient-x86_64.*$' | awk '{print $2}')
+                kill -2 $(ps aux | grep '[m]icclient-x86_64.*$' | awk '{print $2}')
                 sleep 1
                 exit 0
             fi
