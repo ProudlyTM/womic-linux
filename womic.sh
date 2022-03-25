@@ -49,8 +49,6 @@ while getopts "hbwk" OPTION; do
             echo ""
             printf "Run 'womic -k' to disconnect\n\n"
             ./$MICCLIENT -t Bluetooth $ADDRESS &
-            sleep 1
-            echo $! > /tmp/womic.pid
             sleep 3
             ;;
         w)
@@ -62,16 +60,14 @@ while getopts "hbwk" OPTION; do
             echo ""
             printf "Run 'womic -k' to disconnect\n\n"
             ./$MICCLIENT -t Wifi $IP &
-            sleep 1
-            echo $! > /tmp/womic.pid
             sleep 3
             ;;
         k)
-            if ! ps -p $(cat /tmp/womic.pid) > /dev/null 2>&1; then
+            if ! kill -2 $(ps aux | grep 'micclient-x86_64.*$' | awk '{print $2}') > /dev/null 2>&1; then
                 printf "WO Mic is not running!\n"
                 exit 1
             else
-                kill -2 $(cat /tmp/womic.pid)
+                kill -2 $(ps aux | grep 'micclient-x86_64.*$' | awk '{print $2}')
                 sleep 1
                 exit 0
             fi
