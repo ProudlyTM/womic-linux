@@ -19,11 +19,12 @@ else
     if [ "$INPUT" == "y" ]; then
         printf "\n"
         wget -q --show-progress https://wolicheng.com/womic/softwares/micclient-x86_64.AppImage
-        printf "\n"
 
         if [ $? -eq 1 ]; then
             curl https://wolicheng.com/womic/softwares/micclient-x86_64.AppImage -o micclient-x86_64.AppImage
         fi
+
+        printf "\n"
     else
         printf "\nThe WO Mic Appimage binary is required in order for the script to function.\n"
         printf "Either re-run the script and choose \"y\" to download the binary automatically or download it manually according to the README file.\n"
