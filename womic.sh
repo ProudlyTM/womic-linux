@@ -5,7 +5,7 @@ if [ $# -eq 0 ]; then
     echo "Options:"
     echo "   -b   - to connect via Bluetooth"
     echo "   -w   - to connect via WiFi"
-    echo "   -k   - to disconnect" 
+    echo "   -k   - to disconnect"
     echo "   -h   - help (this message)"
     exit 1
 fi
@@ -13,8 +13,22 @@ fi
 if [ `ls | grep ^micclient-x86_64.*$` ]; then
     MICCLIENT=$(ls | grep ^micclient-x86_64.*$)
 else
-    echo "WO Mic Appimage binary not found! Make sure you have this script in the same directory as the binary"
-    exit 1
+    printf "WO Mic Appimage binary not found! Would you like to download it now? (y/n): "
+    read INPUT
+
+    if [ "$INPUT" == "y" ]; then
+        printf "\n"
+        wget -q --show-progress https://wolicheng.com/womic/softwares/micclient-x86_64.AppImage
+        printf "\n"
+
+        if [ $? -eq 1 ]; then
+            curl https://wolicheng.com/womic/softwares/micclient-x86_64.AppImage -o micclient-x86_64.AppImage
+        fi
+    else
+        printf "\nThe WO Mic Appimage binary is required in order for the script to function.\n"
+        printf "Either re-run the script and choose \"y\" to download the binary automatically or download it manually according to the README file.\n"
+        exit 1
+    fi
 fi
 
 function executable_check() {
